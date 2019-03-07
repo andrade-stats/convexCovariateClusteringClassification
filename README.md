@@ -10,17 +10,15 @@ Experiments on synthetic data
 
 **1. Training**: Train with different hyperparameters, e.g.:
 
-	```bash
- 	$ python3 syntheticDataExperiments.py smallContra 100 proposed
-	```
+ 	$ python syntheticDataExperiments.py smallContra 100 proposed
 
 **2. Run clustering evaluation**: run all evaluation measures and save results, e.g.:
 
-	$ python3 evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallContra 1000
+	$ python evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallContra 1000
 
 **3. Visualize Results**: The results are save in the folder "plots".
 
-	$ python3 analyzeClustering.py
+	$ python analyzeClustering.py
 
 
 ADMM Implementation
