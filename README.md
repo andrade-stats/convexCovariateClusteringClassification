@@ -16,15 +16,11 @@ Experiments on synthetic data
 
 **2. Run clustering evaluation**: run all evaluation measures and save results, e.g.:
 
-	```bash
 	$ python3 evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallContra 1000
-	```
 
 **3. Visualize Results**: The results are save in the folder "plots".
 
-	```bash
 	$ python3 analyzeClustering.py
-	```
 
 
 ADMM Implementation
