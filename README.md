@@ -1,21 +1,30 @@
 Convex Covariate Clustering for Classification
 ==
 
-Method proposed in 
+Python 3 Implementation of the method as proposed in 
 http://arxiv.org/abs/1903.01680
 
  
 Experiments on synthetic data
 ==
-1. train with different hyperparameters, e.g.:
-/opt/intel/intelpython3/bin/python syntheticDataExperiments.py smallContra 100 proposed
 
-2. run all evaluation measures and save results, e.g.:
-/opt/intel/intelpython3/bin/python evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallContra 1000
+**1. Training**: Train with different hyperparameters, e.g.:
 
-3. visualize results:
-/opt/intel/intelpython3/bin/python analyzeClustering.py
-The results are save in the folder "plots".
+	```bash
+ 	$ python3 syntheticDataExperiments.py smallContra 100 proposed
+	```
+
+**2. Run clustering evaluation**: run all evaluation measures and save results, e.g.:
+
+	```bash
+	$ python3 evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallContra 1000
+	```
+
+**3. Visualize Results**: The results are save in the folder "plots".
+
+	```bash
+	$ python3 analyzeClustering.py
+	```
 
 
 ADMM Implementation
