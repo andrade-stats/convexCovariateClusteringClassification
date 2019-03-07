@@ -1,5 +1,25 @@
+Convex Covariate Clustering for Classification
+==
 
--------------------------  Main implementation ---------------------------------
+Method proposed in 
+http://arxiv.org/abs/1903.01680
+
+ 
+Experiments on synthetic data
+==
+1. train with different hyperparameters, e.g.:
+/opt/intel/intelpython3/bin/python syntheticDataExperiments.py smallContra 100 proposed
+
+2. run all evaluation measures and save results, e.g.:
+/opt/intel/intelpython3/bin/python evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallContra 1000
+
+3. visualize results:
+/opt/intel/intelpython3/bin/python analyzeClustering.py
+The results are save in the folder "plots".
+
+
+ADMM Implementation
+==
  
  ADMM.py
  parallelADMM(dataFeatures, dataLabels, covariateSims, origNu, origGamma, optParams, warmStartAuxilliaryVars, paramId)
@@ -16,20 +36,10 @@
  identify connected components:
  getClusteringAndSelectedFeatures(edgesU, singleU, B, rho, S, nu, gamma, allAdjacentNodesPrior)
  in zStep.py
- 
-------------------------- Experiments on synthetic data ---------------------------------
 
-1. train with different hyperparameters, e.g.:
-/opt/intel/intelpython3/bin/python syntheticDataExperiments.py smallContra 100 proposed
 
-2. run all evaluation measures and save results, e.g.:
-/opt/intel/intelpython3/bin/python evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallContra 1000
-
-3. visualize results:
-/opt/intel/intelpython3/bin/python analyzeClustering.py
-The results are save in the folder "plots".
-
------------------------------------- Visualization Details --------------------------------------------
+Visualization Details
+==
 
 the visualization in "analyzeClustering.py" uses the colors extracted from:
 http://tools.medialab.sciences-po.fr/iwanthue/
