@@ -12,19 +12,13 @@ import sklearn.metrics
 PATH_TO_SOURCE_FOLDER = "../"
 
 
-def projectData(dataFeatures, sortedClusters):
+LAMBDA = 0.1 # default value
 
-    OLD_DIM = dataFeatures.shape[1]
-    NEW_DIM = len(sortedClusters)
+TOTAL_NUMBER_OF_FOLDS_FOR_SYNTHETIC_DATA = 10  # default value
 
-    T = numpy.zeros((NEW_DIM, OLD_DIM))
-    
-    for i in range(NEW_DIM):
-        for j in sortedClusters[i]:
-            T[i,j] = 1
-    
-    return numpy.dot(dataFeatures, T.transpose())
-
+DEFAULT_MAX_LBFGS_ITERATIONS = 15000 # default value
+DEFAULT_ADMM_MAX_ITERATIONS = 1000 # default value 
+DEFAULT_EPSILON = 0.00001 # default value
 
 def getHyperparameters(hyperparametersRange):
     if hyperparametersRange == "coarse":
@@ -45,7 +39,7 @@ def getHyperparameters(hyperparametersRange):
         allNus =    [0.0003, 0.0001, 0.00007, 0.00005, 0.0005]
         allGammas = [0.01, 0.007, 0.005, 0.05, 0.0001, 0.00001]
     elif hyperparametersRange == "onlyNu":
-        allNus = [float(2 ** (-i)) for i in numpy.arange(0, 30, 0.1)]
+        allNus = [float(2 ** (-i)) for i in numpy.arange(0, 30, 0.1)] # setting in journal
         allNus.append(0)
         allGammas = [0.0]
       
@@ -57,6 +51,21 @@ def getHyperparameters(hyperparametersRange):
         assert(False)
         
     return allNus, allGammas
+
+
+def projectData(dataFeatures, sortedClusters):
+
+    OLD_DIM = dataFeatures.shape[1]
+    NEW_DIM = len(sortedClusters)
+
+    T = numpy.zeros((NEW_DIM, OLD_DIM))
+    
+    for i in range(NEW_DIM):
+        for j in sortedClusters[i]:
+            T[i,j] = 1
+    
+    return numpy.dot(dataFeatures, T.transpose())
+
         
 
 

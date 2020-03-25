@@ -16,6 +16,12 @@ def getSyntheticDataProperties(testSetting):
         NUMBER_OF_COVARIATES_PER_CLUSTER = 4
         IRRELEVANT_CLUSTERS = 0 # 2
         CONTRADICTING_CLUSTERS = 2
+    elif testSetting == "smallFullContra":
+        NUMBER_OF_CLASSES = 4
+        NUMBER_OF_LATENT_CLUSTERS = 10
+        NUMBER_OF_COVARIATES_PER_CLUSTER = 4
+        IRRELEVANT_CLUSTERS = 0
+        CONTRADICTING_CLUSTERS = "all"
     elif testSetting == "large":
         NUMBER_OF_CLASSES = 4
         NUMBER_OF_LATENT_CLUSTERS = 10
@@ -28,6 +34,12 @@ def getSyntheticDataProperties(testSetting):
         NUMBER_OF_COVARIATES_PER_CLUSTER = 20 
         IRRELEVANT_CLUSTERS = 0 # 2
         CONTRADICTING_CLUSTERS = 2
+    elif testSetting == "largeFullContra":
+        NUMBER_OF_CLASSES = 4
+        NUMBER_OF_LATENT_CLUSTERS = 10
+        NUMBER_OF_COVARIATES_PER_CLUSTER = 20 
+        IRRELEVANT_CLUSTERS = 0 
+        CONTRADICTING_CLUSTERS = "all"
     elif testSetting == "hugeContra":
         # used only for runtime test
         NUMBER_OF_CLASSES = 4
@@ -35,6 +47,12 @@ def getSyntheticDataProperties(testSetting):
         NUMBER_OF_COVARIATES_PER_CLUSTER = 100
         IRRELEVANT_CLUSTERS = 0
         CONTRADICTING_CLUSTERS = 2
+    elif testSetting == "hugeFullContra":
+        NUMBER_OF_CLASSES = 4
+        NUMBER_OF_LATENT_CLUSTERS = 10
+        NUMBER_OF_COVARIATES_PER_CLUSTER = 100 
+        IRRELEVANT_CLUSTERS = 0 
+        CONTRADICTING_CLUSTERS = "all"
     else:
         assert(False)
         
@@ -91,9 +109,11 @@ def createFixedWeightsMatrix(NUMBER_OF_CLASSES, numberOfRelevantCovariates, numb
     for k in range(numberOfRelevantClusters):
         classWeightIds[k] = int(k % NUMBER_OF_CLASSES)
     
+    print("numpy.max(hiddenClusterIds) = ", numpy.max(hiddenClusterIds))
+
     for i in range(numberOfRelevantCovariates):
         classId = classWeightIds[hiddenClusterIds[i]]
-        B[classId, i] = CLASS_STRENGTH
+        B[classId, i] = CLASS_STRENGTH * (hiddenClusterIds[i] / numpy.max(hiddenClusterIds)) + 0.1 * CLASS_STRENGTH
     
     return B
 
@@ -138,14 +158,64 @@ def createCovariateSimMatrixFixedInOut(hiddenClusterIdsOrig, IN_SIM, OUT_SIM, NU
     
     return covariateSims, hiddenClusterIds
 
+def createCovariateSimMatrixFixedInOut_fullContra(hiddenClusterIdsOrig, IN_SIM, OUT_SIM, NUMBER_OF_COVARIATES_PER_CLUSTER):
+    assert(NUMBER_OF_COVARIATES_PER_CLUSTER % 2 == 0)
+    NUMBER_OF_COVARIATES = hiddenClusterIdsOrig.shape[0]
+
+    print("hiddenClusterIdsOrig = ")
+    print(hiddenClusterIdsOrig)
+
+    hiddenClusterIdsForSim = numpy.zeros_like(hiddenClusterIdsOrig)
+
+    currentClusterId = 0
+    i1 = 0
+    exit = False
+    while not exit:
+        hiddenClusterIdsForSim[i1] = currentClusterId
+        for i2 in range(i1 + 1,NUMBER_OF_COVARIATES):
+            if hiddenClusterIdsOrig[i2] == hiddenClusterIdsOrig[i1] or hiddenClusterIdsOrig[i2] == hiddenClusterIdsOrig[i1] + 1:
+                hiddenClusterIdsForSim[i2] = currentClusterId
+            else:
+                i1 = i2
+                break
+            
+            if i2 == NUMBER_OF_COVARIATES - 1:
+                exit = True    
+
+        currentClusterId += 1
+
+
+    print("hiddenClusterIdsForSim = ")
+    print(hiddenClusterIdsForSim)
+    # assert(False)
+    # print "hiddenClusterIds = "
+    # print hiddenClusterIds
+            
+    covariateSims = numpy.zeros((NUMBER_OF_COVARIATES, NUMBER_OF_COVARIATES))
+    
+    for i1 in range(NUMBER_OF_COVARIATES):
+        for i2 in range(i1 + 1,NUMBER_OF_COVARIATES):
+            if hiddenClusterIdsForSim[i1] == hiddenClusterIdsForSim[i2]:
+                covariateSims[i1,i2] = IN_SIM
+            else:
+                covariateSims[i1,i2] = OUT_SIM
+                
+            covariateSims[i2,i1] = covariateSims[i1,i2]
+    
+    # set diagonal to maxVal
+    for i in range(NUMBER_OF_COVARIATES):
+        covariateSims[i,i] = 1.0
+    
+    return covariateSims, hiddenClusterIdsOrig
+
+
 # CONTRADICTING_CLUSTERS specifies the number of times the clustering implied by the prior similarity contradicts with the class label information.
 def generateDataMultivariateNormal(NUMBER_OF_CLASSES, NUMBER_OF_SAMPLES_PER_CLASS, NUMBER_OF_LATENT_CLUSTERS, NUMBER_OF_COVARIATES_PER_CLUSTER, IRRELEVANT_CLUSTERS, CONTRADICTING_CLUSTERS, TOTAL_NUMBER_OF_FOLDS):
     assert(NUMBER_OF_COVARIATES_PER_CLUSTER >= 2)
     
     numberOfRelevantClusters = NUMBER_OF_LATENT_CLUSTERS - IRRELEVANT_CLUSTERS 
     assert(numberOfRelevantClusters >= NUMBER_OF_CLASSES)
-    assert(numberOfRelevantClusters >= CONTRADICTING_CLUSTERS * 2)
-    assert(CONTRADICTING_CLUSTERS <= NUMBER_OF_CLASSES)
+    
         
     NUMBER_OF_COVARIATES = NUMBER_OF_LATENT_CLUSTERS * NUMBER_OF_COVARIATES_PER_CLUSTER
     
@@ -167,12 +237,18 @@ def generateDataMultivariateNormal(NUMBER_OF_CLASSES, NUMBER_OF_SAMPLES_PER_CLAS
     
     IN_SIM = 0.9
     OUT_SIM = 0.0        
-    covariateSims, hiddenClusterIds = createCovariateSimMatrixFixedInOut(hiddenClusterIds, IN_SIM, OUT_SIM, NUMBER_OF_COVARIATES_PER_CLUSTER, CONTRADICTING_CLUSTERS)
+    if CONTRADICTING_CLUSTERS == "all":
+        covariateSims, hiddenClusterIds = createCovariateSimMatrixFixedInOut_fullContra(hiddenClusterIds, IN_SIM, OUT_SIM, NUMBER_OF_COVARIATES_PER_CLUSTER)
+    else:
+        assert(numberOfRelevantClusters >= CONTRADICTING_CLUSTERS * 2)
+        assert(CONTRADICTING_CLUSTERS <= NUMBER_OF_CLASSES)
+        covariateSims, hiddenClusterIds = createCovariateSimMatrixFixedInOut(hiddenClusterIds, IN_SIM, OUT_SIM, NUMBER_OF_COVARIATES_PER_CLUSTER, CONTRADICTING_CLUSTERS)
     
     if NUMBER_OF_COVARIATES <= 50:
         print("final covariateSims = ")
         helper.showMatrix(covariateSims)
-    
+        # assert(False)
+
     print("finished creating covariate similarity matrix")
     
     # ensure that all irrelevant clusters have the same clusterId
@@ -187,17 +263,24 @@ def generateDataMultivariateNormal(NUMBER_OF_CLASSES, NUMBER_OF_SAMPLES_PER_CLAS
         helper.showVecInt(hiddenClusterIds)
         print("final classMeanWeights = ")
         helper.showMatrix(classMeanWeights)
-        
+        # assert(False)
+
     print("number of cluster = ", len(set(hiddenClusterIds)))
     assert(classMeanWeights.shape[1] == NUMBER_OF_COVARIATES)
     print("NUMBER_OF_COVARIATES = ", NUMBER_OF_COVARIATES)
     
+    # NUMBER_OF_UNLABELED_DATA_SAMPLES_PER_CLASS = 250
+    # unlabeledData_allFolds = []
+
     dataFeature_allFolds = []
     dataLabels_allFolds = []
     for foldId in range(TOTAL_NUMBER_OF_FOLDS):
         dataFeatures, dataLabels =  sampleDataFromMultivariateNormal(classMeanWeights, covariateSims, NUMBER_OF_CLASSES, NUMBER_OF_SAMPLES_PER_CLASS)
         dataFeature_allFolds.append(dataFeatures)
         dataLabels_allFolds.append(dataLabels)
+
+        # unlabeledData, _ =  sampleDataFromMultivariateNormal(classMeanWeights, covariateSims, NUMBER_OF_CLASSES, NUMBER_OF_SAMPLES_PER_CLASS)
+        # unlabeledData_allFolds.append(unlabeledData)
         
     return covariateSims, dataFeature_allFolds, dataLabels_allFolds, hiddenClusterIds, relevantCovariates
 

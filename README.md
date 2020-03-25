@@ -10,11 +10,11 @@ Experiments on synthetic data
 
 **1. Training**: Train with different hyperparameters, e.g.:
 
- 	$ python syntheticDataExperiments.py smallContra 100 proposed
+ 	$ python syntheticDataExperiments.py smallFullContra 100 proposed
 
 **2. Run clustering evaluation**: run all evaluation measures and save results, e.g.:
 
-	$ python evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallContra 1000
+	$ python evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallFullContra 1000
 
 **3. Visualize Results**: The results are save in the folder "plots".
 

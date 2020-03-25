@@ -9,7 +9,7 @@ import cvxpyTraining
 
 # Examples:
 # /opt/intel/intelpython3/bin/python syntheticDataExperiments.py smallContra 1000 cvxpy
-# /opt/intel/intelpython3/bin/python syntheticDataExperiments.py smallContra 100 proposed
+# /opt/intel/intelpython3/bin/python syntheticDataExperiments.py smallFullContra 10 proposed
 
 def main():
 
@@ -36,7 +36,7 @@ def main():
     optParams["AVG_NEIGHBOURS"] = "all"
     optParams["INITIAL_RHO"] = 1.0
     optParams["MAX_LBFGS_ITERATIONS"] = 15000 # default value
-    optParams["ADMM_MAX_ITERATIONS"] = 10000 
+    optParams["ADMM_MAX_ITERATIONS"] = 1000 # default value
       
     optParams["RHO_MULTIPLIER"] = 1.0
     optParams["EPSILON"] = 0.00001

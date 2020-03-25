@@ -13,7 +13,7 @@ import constants
 
 
 # example:
-# /opt/intel/intelpython3/bin/python evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallContra 100
+# /opt/intel/intelpython3/bin/python evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallFullContra 100
 
 
 numpy.random.seed(3523421)
