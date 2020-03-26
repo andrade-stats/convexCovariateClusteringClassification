@@ -13,7 +13,7 @@ import constants
 
 
 # example:
-# /opt/intel/intelpython3/bin/python evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallFullContra 100
+# /opt/intel/intelpython3/bin/python evalAndSaveResults.py SYNTHETIC_DATA onlyNu 10 all smallFullContra 10
 
 
 numpy.random.seed(3523421)
@@ -104,13 +104,13 @@ optParams = {}
 optParams["AVG_NEIGHBOURS"] = avgNeighbours
 optParams["INITIAL_RHO"] = 1.0
 optParams["MAX_LBFGS_ITERATIONS"] = 15000 # default value
-optParams["ADMM_MAX_ITERATIONS"] = 10000
-optParams["RHO_MULTIPLIER"] = 1.0
-optParams["EPSILON"] = 0.00001
+optParams["ADMM_MAX_ITERATIONS"] = 1000 # default value
+optParams["RHO_MULTIPLIER"] = 1.0 # default value
+optParams["EPSILON"] = 0.00001 # default value
 
 # optParams["CVXPY_USED"] = "_trainedWithCVXPY"
 optParams["CVXPY_USED"] = ""
-
+optParams["SOLVER"] = ""
 
 allNus, allGammas = helper.getHyperparameters(hyperparametersRange)
 TOTAL_NUMBER_OF_PARAMETERS = len(allNus) * len(allGammas)
@@ -213,8 +213,7 @@ for foldId in range(TOTAL_NUMBER_OF_FOLDS):
     assert(len(allClusterings) == allResultsId)
     allResults = allResultsWithEmptyRows[0:allResultsId]
     
-    FOLDER_NAME = "../cleanResults/"
-    filename = FOLDER_NAME + DATA_NAME + TRAIN_DATA_SEPCIFIER + "_" + hyperparametersRange + "_" + str(avgNeighbours) + "Neighbours_" + str(foldId) + "fold"
+    filename = helper.EVALUATION_RESULTS_FOLDER + DATA_NAME + TRAIN_DATA_SEPCIFIER + "_" + hyperparametersRange + "_" + str(avgNeighbours) + "Neighbours_" + str(foldId) + "fold"
     numpy.save(filename, allResults)
     with open(filename + "_clusterings.pkl", "wb") as f:
         pickle.dump(allClusterings, f)

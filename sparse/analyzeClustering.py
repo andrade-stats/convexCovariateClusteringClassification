@@ -3,11 +3,14 @@ import pickle
 import helper
 import visualizer
 import constants
+import sys
+
+# /opt/intel/intelpython3/bin/python analyzeClustering.py SYNTHETIC_DATA smallFullContra 10
 
 
-DATA_NAME = "SYNTHETIC_DATA"
-testSetting = "smallContra"
-NUMBER_OF_SAMPLES_PER_CLASS = 100
+DATA_NAME = sys.argv[1]
+testSetting = sys.argv[2]
+NUMBER_OF_SAMPLES_PER_CLASS = int(sys.argv[3])
 
 
 hyperparametersRange = "onlyNu"
@@ -21,10 +24,8 @@ TRAIN_DATA_SEPCIFIER = testSetting + "_" + str(NUMBER_OF_SAMPLES_PER_CLASS) + "s
 
 
 criteriaId = constants.LOG_MARGINAL_LAPLACE_DIAG_VALIDATION_CRITERIA_ID
-
-
-FOLDER_NAME = "../cleanResults/" 
-filename = FOLDER_NAME + DATA_NAME + TRAIN_DATA_SEPCIFIER + "_" + hyperparametersRange + "_" + str(avgNeighbours) + "Neighbours_" + str(foldId) + "fold"
+ 
+filename = helper.EVALUATION_RESULTS_FOLDER + DATA_NAME + TRAIN_DATA_SEPCIFIER + "_" + hyperparametersRange + "_" + str(avgNeighbours) + "Neighbours_" + str(foldId) + "fold"
        
 allResults = numpy.load(filename + ".npy")
 

@@ -1,4 +1,5 @@
 import numpy
+import helper
 from graphviz import Digraph
 from collections import defaultdict
 
@@ -313,7 +314,7 @@ def showTreeAsGraph(allRootNodes, dimToWord, allClassLabels, showClassId, output
     
     print("totalNumberOfCovariatesInClass = ", totalNumberOfCovariatesInClass)
     print("START RENDERING:")
-    wholeGraph.render('../plots/' + outputFilename, view=False, cleanup = True)
+    wholeGraph.render(helper.PLOT_RESULTS_FOLDER + outputFilename, view=False, cleanup = True)
 
     
     return
@@ -374,7 +375,7 @@ def drawColorLegend(DATA_NAME, allClassLabels):
     for i in range(len(allClassLabels)-1, -1, -1):
         wholeGraph.node('label' + str(i), label = allClassLabels[i], color=ALL_COLORS[i], fontcolor=ALL_COLORS[i])
     
-    wholeGraph.render('../plots/' + DATA_NAME + "_legend", view=False, cleanup = True)
+    wholeGraph.render(helper.PLOT_RESULTS_FOLDER + DATA_NAME + "_legend", view=False, cleanup = True)
 
 
 # checked

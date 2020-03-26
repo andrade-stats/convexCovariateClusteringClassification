@@ -9,7 +9,9 @@ import sklearn.metrics
 # import tools.load_documents as load_documents
 # import tools.math_helpers as math_helpers
 
-PATH_TO_SOURCE_FOLDER = "../"
+TRAINING_RESULTS_FOLDER = "../trainingResults/"
+EVALUATION_RESULTS_FOLDER = "../cleanResults/"
+PLOT_RESULTS_FOLDER = "../plots/"
 
 
 LAMBDA = 0.1 # default value
@@ -131,23 +133,23 @@ def thresholdSimilarityMatrix(covariateSims, avgNeighbours):
 
 
 def getBaseFilename(CORPUS_NAME, DATA_SPECIFIER_STRING):
-    return PATH_TO_SOURCE_FOLDER + "trainingResults/" + CORPUS_NAME + "_" + DATA_SPECIFIER_STRING + "_" 
+    return TRAINING_RESULTS_FOLDER + CORPUS_NAME + "_" + DATA_SPECIFIER_STRING + "_" 
 
-def getResultStatisticsFilename(DATA_NAME, hyperparametersRange, EVAL_CRITERIA, WITH_RETRAINING, additionalInfo):
-    FOLDER_NAME = PATH_TO_SOURCE_FOLDER + "evalResults/" 
-    filename = FOLDER_NAME + DATA_NAME + "_" + hyperparametersRange + "_" + EVAL_CRITERIA + "_" + str(WITH_RETRAINING) 
-    if len(additionalInfo) > 0:
-        return filename + "_" + additionalInfo
-    else:
-        return filename
-
-def getResultStatisticsKMeansFilename(DATA_NAME, EVAL_CRITERIA, additionalInfo):
-    FOLDER_NAME = PATH_TO_SOURCE_FOLDER + "evalResults/" 
-    filename = FOLDER_NAME + DATA_NAME + "_" + EVAL_CRITERIA 
-    if len(additionalInfo) > 0:
-        return filename + "_" + additionalInfo
-    else:
-        return filename
+# def getResultStatisticsFilename(DATA_NAME, hyperparametersRange, EVAL_CRITERIA, WITH_RETRAINING, additionalInfo):
+#     FOLDER_NAME = PATH_TO_SOURCE_FOLDER + "evalResults/" 
+#     filename = FOLDER_NAME + DATA_NAME + "_" + hyperparametersRange + "_" + EVAL_CRITERIA + "_" + str(WITH_RETRAINING) 
+#     if len(additionalInfo) > 0:
+#         return filename + "_" + additionalInfo
+#     else:
+#         return filename
+# 
+# def getResultStatisticsKMeansFilename(DATA_NAME, EVAL_CRITERIA, additionalInfo):
+#     FOLDER_NAME = PATH_TO_SOURCE_FOLDER + "evalResults/" 
+#     filename = FOLDER_NAME + DATA_NAME + "_" + EVAL_CRITERIA 
+#     if len(additionalInfo) > 0:
+#         return filename + "_" + additionalInfo
+#     else:
+#         return filename
 
 
 # allUniqueClusterings and allUniqueRelevances are lists

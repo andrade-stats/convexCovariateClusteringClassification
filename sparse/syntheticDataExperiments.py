@@ -37,9 +37,8 @@ def main():
     optParams["INITIAL_RHO"] = 1.0
     optParams["MAX_LBFGS_ITERATIONS"] = 15000 # default value
     optParams["ADMM_MAX_ITERATIONS"] = 1000 # default value
-      
-    optParams["RHO_MULTIPLIER"] = 1.0
-    optParams["EPSILON"] = 0.00001
+    optParams["RHO_MULTIPLIER"] = 1.0 # default value
+    optParams["EPSILON"] = 0.00001 # default value
 
     covariateSims, dataFeature_allFolds, dataLabels_allFolds, trueClusterIds, trueRelevantCovariates, NUMBER_OF_CLASSES, NUMBER_OF_LATENT_CLUSTERS, NUMBER_OF_COVARIATES_PER_CLUSTER, IRRELEVANT_CLUSTERS, CONTRADICTING_CLUSTERS = syntheticDataGeneration.generateData(testSetting, NUMBER_OF_SAMPLES_PER_CLASS, TOTAL_NUMBER_OF_FOLDS)
     

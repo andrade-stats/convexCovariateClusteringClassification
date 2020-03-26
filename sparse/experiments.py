@@ -15,7 +15,7 @@ def saveStatistics(BASE_FILENAME, optParams, nu, gamma, partialConnectedInfo, B,
     OPT_PARAM_STRING += "_" + str(optParams["AVG_NEIGHBOURS"]) + "avgNeighbours"
     OPT_PARAM_STRING += "_" + str(optParams["ADMM_MAX_ITERATIONS"]) + "admmMaxIt"
     OPT_PARAM_STRING += "_" + str(nu) + "nu_" + str(gamma) + "gamma" 
-    OPT_PARAM_STRING += optParams["CVXPY_USED"]
+    OPT_PARAM_STRING += optParams["CVXPY_USED"] + optParams["SOLVER"]
     
     # clusterIds, relevance = fullyConnectedInfo
     # numpy.save(BASE_FILENAME + OPT_PARAM_STRING + "_clusterIdsFullyConnected", clusterIds)
@@ -40,7 +40,7 @@ def loadStatistics(BASE_FILENAME, optParams, nu, gamma):
     OPT_PARAM_STRING += "_" + str(optParams["AVG_NEIGHBOURS"]) + "avgNeighbours"
     OPT_PARAM_STRING += "_" + str(optParams["ADMM_MAX_ITERATIONS"]) + "admmMaxIt"
     OPT_PARAM_STRING += "_" + str(nu) + "nu_" + str(gamma) + "gamma" 
-    OPT_PARAM_STRING += optParams["CVXPY_USED"]
+    OPT_PARAM_STRING += optParams["CVXPY_USED"] + optParams["SOLVER"]
     
     # allClusterIds = numpy.load(BASE_FILENAME + OPT_PARAM_STRING + "_clusterIdsFullyConnected" + ".npy")
     # allRelevanceIds = numpy.load(BASE_FILENAME + OPT_PARAM_STRING + "_relevanceFullyConnected" + ".npy")
@@ -58,24 +58,38 @@ def loadStatistics(BASE_FILENAME, optParams, nu, gamma):
 
 
 def runTraining(BASE_FILENAME, trainingData, trainingLabel, covariateSims, allNus, allGammas, optParams):
-    assert(optParams["CVXPY_USED"] == "")
+    assert(optParams["CVXPY_USED"] == "" and optParams["SOLVER"] == "")
     
     start_time_allExperiments = time.time()
     
     NUMBER_OF_PARAMETER_COMBINATIONS = len(allNus) * len(allGammas)
     notConvergedCount = 0
     
+    assert(len(allGammas) == 1)
+    allDurations = numpy.zeros(len(allNus))
+
     warmStartAuxilliaryVars = None
     
     paramId = 0
-    for nu in allNus:
+    for itNr, nu in enumerate(allNus):
         for gamma in allGammas:
+            start_time_oneExperiment = time.time()
+
             paramId += 1
             B, beta, partialConnectedInfo, converged, warmStartAuxilliaryVars = ADMM.parallelADMM(trainingData, trainingLabel, covariateSims, nu, gamma, optParams, warmStartAuxilliaryVars, paramId)
               
             if not converged:
                 notConvergedCount += 1
     
+            allDurations[itNr] = (time.time() - start_time_oneExperiment) / 60.0
+
+            if itNr > 5 and allDurations[itNr] > 20.0 and allDurations[itNr-1] > 20.0:
+                print("--- ONE RUN IS EXPECTED TO TAKE MORE THAN 24h --- ")
+                print("allDurations[itNr-1] = ", allDurations[itNr-1])
+                print("allDurations[itNr] = ", allDurations[itNr])
+                print("--- EXIT --- ")
+                assert(False)
+                
             saveStatistics(BASE_FILENAME, optParams, nu, gamma, partialConnectedInfo, B, beta)
             
             microScoreTrain, macroScoreTrain, accuracyTrain = ADMM.evaluate(trainingData, trainingLabel, B, beta)
@@ -92,10 +106,16 @@ def runTraining(BASE_FILENAME, trainingData, trainingLabel, covariateSims, allNu
     print("Finished successfully full training in (min) = ", round(duration / (60.0),3))
     print("-----------------")
     
+    if (duration / 60.0) > 4500:
+        print("STOP: ONE FULL RUN TAKES TOO LONG")
+        assert(False)
+    
+
     print("NUMBER_OF_PARAMETER_COMBINATIONS = ", NUMBER_OF_PARAMETER_COMBINATIONS)
     print("notConvergedCount = ", notConvergedCount)
     
     return duration
 
 
+    
     

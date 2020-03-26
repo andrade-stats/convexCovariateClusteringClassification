@@ -83,8 +83,7 @@ def showResults(testSetting, NUMBER_OF_SAMPLES_PER_CLASS, METHOD):
     
         print("**************** RESULTS FOR FOLD " + str(foldId) + " ********************************")
         
-        FOLDER_NAME = "../cleanResults/"
-        filename = FOLDER_NAME + DATA_NAME + TRAIN_DATA_SEPCIFIER + "_" + METHOD + "_" + str(avgNeighbours) + "Neighbours_" + str(foldId) + "fold"
+        filename = helper.EVALUATION_RESULTS_FOLDER + DATA_NAME + TRAIN_DATA_SEPCIFIER + "_" + METHOD + "_" + str(avgNeighbours) + "Neighbours_" + str(foldId) + "fold"
         allResults = numpy.load(filename + ".npy")
         
         allClusterings = None

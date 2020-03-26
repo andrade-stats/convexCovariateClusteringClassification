@@ -18,7 +18,7 @@ Experiments on synthetic data
 
 **3. Visualize Results**: The results are save in the folder "plots".
 
-	$ python analyzeClustering.py
+	$ python analyzeClustering.py SYNTHETIC_DATA smallFullContra 1000
 
 
 ADMM Implementation
